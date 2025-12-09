@@ -1,16 +1,5 @@
 import Contact from '../models/contact.js';
-import nodemailer from 'nodemailer';
-import config from '../config/env.js';
-
-const transporter = nodemailer.createTransport({
-    host: config.smtp.host,
-    port: config.smtp.port,
-    secure: config.smtp.secure,
-    auth: {
-        user: config.smtp.auth.user,
-        pass: config.smtp.auth.pass
-    }
-});
+import { sendContactNotification } from '../utils/nodemailer.js';
 
 export const submitContactForm = async (req, res) => {
     try {
@@ -33,24 +22,7 @@ export const submitContactForm = async (req, res) => {
 
         await contact.save();
 
-        const mailOptions = {
-            from: config.email.from,
-            to: config.email.to,
-            subject: `New Contact Form Submission: ${subject}`,
-            html: `
-                <h2>New Contact Form Submission</h2>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-                <p><strong>Subject:</strong> ${subject}</p>
-                <p><strong>Message:</strong></p>
-                <p>${message}</p>
-                <hr>
-                <p><small>Submitted at: ${new Date().toLocaleString()}</small></p>
-            `
-        };
-
-        await transporter.sendMail(mailOptions);
+        await sendContactNotification({ name, email, phone, subject, message });
 
         res.status(201).json({
             success: true,
