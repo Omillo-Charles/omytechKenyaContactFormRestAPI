@@ -1,4 +1,4 @@
-# OmyTech Kenya Contact Form REST API
+# Omytech Kenya Contact Form REST API
 
 A robust Node.js REST API built with Express.js for handling contact form submissions. Features MongoDB integration, email notifications via Nodemailer, comprehensive validation, rate limiting, and security middleware.
 
